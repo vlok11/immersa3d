@@ -1,0 +1,36 @@
+# Immersa 3D AI Service Dependencies
+
+# Core
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Image Processing
+pillow>=10.0.0
+numpy>=1.24.0
+
+# AI/ML Core
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Depth Estimation
+# depth-anything-v2 can be installed from source: pip install git+https://github.com/DepthAnything/Depth-Anything-V2
+transformers>=4.35.0
+
+# Segmentation
+# segment-anything-2 can be installed from source: pip install git+https://github.com/facebookresearch/segment-anything-2
+segment-anything>=1.0
+
+# Enhancement (optional)
+# realesrgan: pip install realesrgan
+# gfpgan: pip install gfpgan
+
+# ONNX Runtime (CPU inference fallback)
+onnxruntime>=1.16.0
+
+# GPU Support (optional)
+# onnxruntime-gpu>=1.16.0
+# Note: Ensure CUDA and cuDNN are installed for GPU support
+
+# Utilities
+pydantic>=2.0.0

@@ -1,0 +1,30 @@
+# General
+.DS_Store
+.idea/
+.vscode/
+*.log
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.next/
+out/
+
+# Java
+target/
+*.class
+.mvn/wrapper/maven-wrapper.properties
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+.env
+
+# Secrets
+.env.local
+.env.production
+.env

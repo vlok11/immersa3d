@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  # Backend Service
+  backend:
+    container_name: immersa-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - MINIO_ENDPOINT=${MINIO_ENDPOINT}
+      - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
+      - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - minio
+    networks:
+      - immersa-network
+
+  # AI Service
+  ai-service:
+    container_name: immersa-ai-service
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - immersa-network
+
+  # MinIO (Object Storage)
+  minio:
+    image: minio/minio
+    container_name: immersa-minio
+    command: server /data --console-address ":9001"
+    environment:
+      - MINIO_ROOT_USER=immersa_minio
+      - MINIO_ROOT_PASSWORD=immersa_minio_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - immersa-network
+
+networks:
+  immersa-network:
+    driver: bridge
+
+volumes:
+  minio_data:
