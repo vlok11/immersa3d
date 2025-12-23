@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  # Frontend Service
+  frontend:
+    container_name: immersa-frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      # In Docker network, we can talk to services by name, but client-side browser needs /api relative path which Nginx handles
+      - NEXT_PUBLIC_API_URL=/
+      - NEXT_PUBLIC_AI_URL=/ai-service
+    depends_on:
+      - backend
+      - ai-service
+    networks:
+      - immersa-network
+
   # Backend Service
   backend:
     container_name: immersa-backend
@@ -15,8 +32,6 @@ services:
       - MINIO_ENDPOINT=${MINIO_ENDPOINT}
       - MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}
       - MINIO_SECRET_KEY=${MINIO_SECRET_KEY}
-    ports:
-      - "8080:8080"
     depends_on:
       - minio
     networks:
@@ -29,8 +44,6 @@ services:
       context: ./ai-service
       dockerfile: Dockerfile
     restart: always
-    ports:
-      - "8000:8000"
     networks:
       - immersa-network
 
@@ -42,11 +55,23 @@ services:
     environment:
       - MINIO_ROOT_USER=immersa_minio
       - MINIO_ROOT_PASSWORD=immersa_minio_password
-    ports:
-      - "9000:9000"
-      - "9001:9001"
     volumes:
       - minio_data:/data
+    networks:
+      - immersa-network
+
+  # Nginx (Reverse Proxy)
+  nginx:
+    image: nginx:alpine
+    container_name: immersa-nginx
+    ports:
+      - "80:80"
+      - "9001:9001" # Expose MinIO Console optionally
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+      - backend
     networks:
       - immersa-network
 

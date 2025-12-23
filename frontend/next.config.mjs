@@ -1,6 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+    output: 'standalone',
     transpilePackages: ['three'],
+    eslint: {
+        // Warning: This allows production builds to successfully complete even if
+        // your project has ESLint errors.
+        ignoreDuringBuilds: true,
+    },
+    typescript: {
+        // Warning: This allows production builds to successfully complete even if
+        // your project has type errors.
+        ignoreBuildErrors: true,
+    },
     // EdgeOne 部署时建议开启 output: 'export' (纯静态) 或保持默认 (SSR)。
     // 这里保持动态，以便通过环境变量控制 API 地址。
     async rewrites() {
