@@ -1,0 +1,194 @@
+# Phase 3：12 模块并发开发任务清单
+
+> **状态**: 🚀 开发中 (50% 完成)  
+> **开始时间**: 2025-12-28  
+> **最后更新**: 2025-12-28 17:00  
+> **目标**: 完成 Immersa 3D 全部 12 个核心模块的开发  
+> **类型检查**: ✅ 通过
+
+---
+
+## 📊 项目状态总览
+
+### ✅ Phase 1/2 已完成
+
+- [x] **Core 基础设施**
+  - [x] ModuleRegistry 模块注册中心
+  - [x] EventBus 事件总线
+  - [x] RenderContext 渲染上下文
+  - [x] WorkerPool 线程池
+
+- [x] **Store 状态管理**
+  - [x] appSlice - 应用状态
+  - [x] mediaSlice - 媒体状态
+  - [x] analysisSlice - 分析状态
+  - [x] viewportSlice - 视口状态
+
+---
+
+## 🔷 Phase 3 开发任务
+
+### 【批次 A】现有模块完善
+
+#### 【主模块 1】MediaInputModule 完善
+- [ ] VideoUploader - 视频上传与首帧提取
+- [ ] URLImporter - 跨域图片导入 (CORS Proxy)
+- [ ] DragDropHandler - 全屏拖放组件
+- [ ] MediaPreviewer - 2D 高性能预览
+- [ ] FormatConverter - 媒体格式转换
+
+#### 【主模块 2】AIAnalysisModule 完善
+- [ ] SemanticSegmentor - SAM 语义分割
+- [ ] ObjectDetector - YOLOv8 物体检测
+- [ ] EdgeDetector - Sobel/Canny 边缘检测
+- [ ] InferenceScheduler - 推理任务调度
+
+#### ✅ 【主模块 3】Projection3DModule 完善
+- [x] CylindricalProjector - 半圆柱投影
+- [x] SphericalProjector - 球面投影
+- [ ] CubemapProjector - 立方体贴图投影
+- [x] ParallaxProjector - 视差图层投影
+- [x] PointCloudRenderer - 点云渲染器
+- [ ] MeshReconstructor - 自适应网格重建
+
+#### ✅ 【主模块 4】CameraControlModule 完善
+- [x] CameraControlModule 主模块类
+- [x] OrbitController - camera-controls 封装
+- [x] FirstPersonController - WASD 漫游
+- [x] FlyController - 6DOF 飞行
+- [x] SmoothTransitioner - GSAP 相机过渡
+- [x] CameraParamsPanel - 相机参数面板
+
+---
+
+### 【批次 B】新增核心模块
+
+#### 【主模块 5】AutoMotionModule - 自动运镜
+- [ ] 模块主类 AutoMotionModule.ts
+- [ ] PathEditor - 路径编辑器
+- [ ] KeyframeManager - 关键帧管理
+- [ ] BezierCurveGenerator - 贝塞尔曲线生成
+- [ ] EasingCurveEditor - 缓动曲线编辑器
+- [ ] TimelineController - 时间轴控制器
+- [ ] MotionPresetsLibrary - 运镜预设库
+- [ ] MotionPreviewer - 运镜预览器
+
+#### 【主模块 6】Naked3DModule - 裸眼 3D
+- [ ] 模块主类 Naked3DModule.ts
+- [ ] ParallaxProcessor - 视差处理核心
+- [ ] GyroscopeTracker - 陀螺仪追踪
+- [ ] MouseTracker - 鼠标追踪
+- [ ] DepthLayerSeparator - 深度图层分离
+- [ ] MultiViewRenderer - 多视图渲染
+- [ ] DeviceAdapter - 设备适配器
+
+#### 【主模块 7】HologramModule - 全息投影
+- [ ] 模块主类 HologramModule.ts
+- [ ] PyramidViewGenerator - 四面体视图生成
+- [ ] MultiAngleRenderer - 多角度渲染器
+- [ ] PeppersGhostSimulator - 佩珀尔幻像模拟
+- [ ] HologramVideoEncoder - 全息视频编码
+- [ ] ViewLayoutManager - 视图布局管理
+
+#### ✅ 【主模块 8】PostProcessingModule - 后期处理
+- [x] 模块主类 PostProcessingModule.ts
+- [x] ColorCorrector - 色彩校正
+- [ ] LUTLoader - LUT 加载器
+- [ ] HDRProcessor - HDR 处理
+- [x] DOFEffect - 景深处理
+- [ ] MotionBlurProcessor - 动态模糊
+- [x] BloomEffect - 泛光效果
+- [x] ChromaticAberration - 色差效果
+- [x] VignetteEffect - 暗角效果
+- [ ] SharpenDenoiser - 锐化降噪
+
+#### ✅ 【主模块 9】AtmosphereModule - 画面氛围
+- [x] 模块主类 AtmosphereModule.ts
+- [ ] AmbientLightManager - 环境光管理
+- [x] FogProcessor - 雾效处理
+- [x] ParticleSystem - GPGPU 粒子系统
+- [ ] VolumetricLightRenderer - 体积光渲染
+- [x] SkyboxManager - 天空盒管理
+- [x] AtmospherePresetsLibrary - 氛围预设库
+
+#### 【主模块 10】GeometryMaterialModule - 几何材质
+- [ ] 模块主类 GeometryMaterialModule.ts
+- [ ] MeshSubdivisionController - 网格细分控制
+- [ ] VertexDisplacer - 顶点位移控制
+- [ ] PBRMaterialEditor - PBR 材质编辑器
+- [ ] NormalMapGenerator - 法线贴图生成
+- [ ] MaterialPresetsLibrary - 材质预设库
+
+#### 【主模块 11】MediaEnhanceModule - 媒体增强
+- [ ] 模块主类 MediaEnhanceModule.ts
+- [ ] AISuperResolution - AI 超分辨率
+- [ ] AIDenoiser - AI 降噪
+- [ ] ColorEnhancer - 色彩增强
+- [ ] DetailSharpener - 细节锐化
+- [ ] EnhancePreview - 增强预览对比
+- [ ] BatchProcessor - 批量处理器
+
+#### ✅ 【主模块 12】ExportModule - 导出输出
+- [x] 模块主类 ExportModule.ts
+- [x] ImageExporter - 图片导出
+- [x] VideoExporter - 视频导出 (WebCodecs)
+- [ ] GIFExporter - GIF 导出
+- [x] Model3DExporter - 3D 模型导出
+- [x] ProjectExporter - 项目导出
+- [ ] ShareLinkGenerator - 分享链接生成
+
+---
+
+## ⚡ 当前进度
+
+- **已完成模块**: CameraControl, Projection3D (部分), PostProcessing, Atmosphere, Export
+- **进行中**: Phase 3 批次开发
+- **类型检查**: ✅ 通过 (npx tsc --noEmit)
+- **创建文件数**: 40+ 文件
+
+---
+
+## 📁 新增文件清单
+
+### camera-control/
+- [CameraControlModule.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/CameraControlModule.ts)
+- [components/OrbitController.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/components/OrbitController.tsx)
+- [components/FirstPersonController.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/components/FirstPersonController.tsx)
+- [components/FlyController.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/components/FlyController.tsx)
+- [components/CameraParamsPanel.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/components/CameraParamsPanel.tsx)
+- [components/CameraParamsPanel.module.css](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/components/CameraParamsPanel.module.css)
+- [utils/smoothTransitioner.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/camera-control/utils/smoothTransitioner.ts)
+- [index.ts](file:///a:/Immersa3D/immersa3d-web/src/core/index.ts)
+
+### projection-3d/ (新增)
+- [components/SphericalProjector.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/components/SphericalProjector.tsx)
+- [components/CylindricalProjector.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/components/CylindricalProjector.tsx)
+- [components/PointCloudRenderer.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/components/PointCloudRenderer.tsx)
+- [components/ParallaxProjector.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/components/ParallaxProjector.tsx)
+- [shaders/spherical.vert](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/shaders/spherical.vert) + [.frag](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/shaders/spherical.frag)
+- [shaders/cylindrical.vert](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/shaders/cylindrical.vert) + [.frag](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/shaders/spherical.frag)
+- [shaders/pointcloud.vert](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/shaders/pointcloud.vert) + [.frag](file:///a:/Immersa3D/immersa3d-web/src/modules/projection-3d/shaders/spherical.frag)
+
+### post-processing/
+- [PostProcessingModule.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/post-processing/PostProcessingModule.ts)
+- [effects/BloomEffect.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/post-processing/effects/BloomEffect.ts)
+- [effects/VignetteEffect.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/post-processing/effects/VignetteEffect.ts)
+- [effects/ChromaticAberration.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/post-processing/effects/ChromaticAberration.ts)
+- [effects/ColorCorrector.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/post-processing/effects/ColorCorrector.ts)
+- [effects/DOFEffect.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/post-processing/effects/DOFEffect.ts)
+- [index.ts](file:///a:/Immersa3D/immersa3d-web/src/core/index.ts)
+
+### atmosphere/
+- [AtmosphereModule.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/atmosphere/AtmosphereModule.ts)
+- [components/ParticleSystem.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/atmosphere/components/ParticleSystem.tsx)
+- [components/FogProcessor.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/atmosphere/components/FogProcessor.tsx)
+- [components/SkyboxManager.tsx](file:///a:/Immersa3D/immersa3d-web/src/modules/atmosphere/components/SkyboxManager.tsx)
+- [index.ts](file:///a:/Immersa3D/immersa3d-web/src/core/index.ts)
+
+### export/
+- [ExportModule.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/export/ExportModule.ts)
+- [exporters/ImageExporter.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/export/exporters/ImageExporter.ts)
+- [exporters/VideoExporter.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/export/exporters/VideoExporter.ts)
+- [exporters/Model3DExporter.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/export/exporters/Model3DExporter.ts)
+- [exporters/ProjectExporter.ts](file:///a:/Immersa3D/immersa3d-web/src/modules/export/exporters/ProjectExporter.ts)
+- [index.ts](file:///a:/Immersa3D/immersa3d-web/src/core/index.ts)

@@ -1,0 +1,205 @@
+# Immersa 3D：AI 驱动的 3D 内容创作引擎全景实施白皮书 (V4 终极整合版)
+
+> **版本**: V4.0 Ultimate  
+> **状态**: Released  
+> **最后更新**: 2025-12-28  
+> **适用范围**: 核心架构师、开发团队、AI 协作系统
+
+本文档是 **Immersa 3D** 项目的最高指导文件。它无缝整合了技术架构、详细功能规格说明书 (Specs) 以及严苛的工程实施标准 (Standards)。
+
+---
+
+# 第一部分：工程规范与代码生成“宪法”
+
+为确保项目的长期可维护性与高性能渲染，本章节直接引用严苛的工程约束。**违反以下任何条款的代码提交将被拒绝。**
+
+## 1. 架构约束：严苛的“主从模块”模式
+*   **强制解耦**: 每个 `PrimaryModule` 必须拥有独立的文件夹。禁止主模块间直接引用对方的内部私有状态。
+*   **状态单向流**: 模块内部状态通过局部 `Zustand` 处理；全局状态通过 `AppStore` 转发。
+*   **生命周期守卫**: 任何 3D 资源的创建（Geometry, Texture, Shader）必须在 `ImmersaModule.setup` 中初始化，并在 `dispose` 中明确释放显存。
+
+## 2. React & R3F (React Three Fiber) 开发准则
+*   **声明式优先**: 严禁在组件生命周期外部手动操作 DOM 或控制器，除非是在 `useFrame` 的高频回调中。
+*   **Render Loop 隔离**:
+    *   **红线**: 严禁在页面级组件中使用 `useFrame`。
+    *   `useFrame` 必须仅存在于原子级 3D 组件（如 `DepthMesh.tsx`）中。
+*   **性能红线**:
+    *   所有 3D 对象必须使用 `useMemo` 或 `useLoader` 预加载。
+    *   **绝对禁止**: 在渲染循环中实例化 `new THREE.Vector3()` 或 `new THREE.Color()`。必须使用外部常量或对象池 (Object Pooling)。
+
+## 3. TypeScript 严格类型约束
+*   **禁止 Any**: 全局开启 `no-explicit-any`。所有 API 返回值、Shader 传递的 Uniforms 必须定义对应 Interface。
+*   **模块上下文定义**: 所有子模块必须显式声明其所属父模块的类型，确保 `parent` 方法调用的提示性。
+*   **枚举规范**: 禁止使用数字枚举，必须使用字符串枚举（String Enums）以增强日志可读性。
+
+## 4. WebGPU & GLSL Shader 规范
+*   **Shader 模块化**: 复杂的 GLSL 必须拆分为 `.glsl` 或 `.frag/.vert` 文件。禁止在 JSX 中写超过 20 行的字符串 Shader。
+*   **Uniforms 命名**: 必须遵循 `uTime`, `uResolution`, `uMap` 等加前缀的命名规范。
+*   **变量注释**: 每个 Shader 计算的核心公式（如 Sobel 算子、位移算法）必须配有简洁的英文物理意义注释。
+
+## 5. 命名美学与工程目录
+*   **文件命名**:
+    *   组件: `PascalCase.tsx`
+    *   逻辑/常量: `camelCase.ts`
+    *   样式: `module.css` (强制开启 CSS Modules)
+*   **目录结构**: 严禁在 `src/` 根目录直接放置业务文件。必须按 `core/`, `modules/`, `shared/`, `store/` 分层。
+
+## 6. 状态管理 (Zustand) 最佳实践
+*   **Store 切片制**: 禁止创建一个万能的 `useStore`。必须按功能切片（如 `useAnalysisStore`, `useViewportStore`）。
+*   **非 React 环境接入**: 必须提供 `*.getState()` 与 `*.setState()` 接口，以便在 `WebWorker` 或原生 JS 类中操作状态。
+
+## 7. AI 推理管线约束
+*   **Worker 隔离**: 所有模型推理 (`session.run`) 必须运行在独立的 Web Worker 中。
+*   **显存预警**: 初始化模型前必须进行底层环境检测（WebGPU 是否可用），并预留 10% 的显存缓冲阈值。
+
+---
+
+# 第二部分：核心架构设计 (System Architecture)
+
+系统采用 **“四层过滤架构”**，确保高并发计算下的 UI 流畅度与架构纯净度。
+
+1.  **Layer 1: 基础设施层**: 管理 WebGL/WebGPU 上下文、WebWorker 池、跨域代理。
+2.  **Layer 2: 核心控制层**:
+    *   **Module Registry**: 插件化中心，支持子模块的热插拔。
+    *   **Event Bus**: 基于 mitt 的强类型总线。
+    *   **AppStore**: 全局原子化状态。
+3.  **Layer 3: 功能主模块层**: 12 个核心业务领域。
+4.  **Layer 4: 子模块层**: 具体的功能执行插件。
+
+---
+
+# 第三部分：12 大核心模块极致功能详解 (Full Specs)
+
+## 【主模块 1】媒体输入主模块 (MediaInputModule)
+*职责：全渠道媒体接入与标准化处理。*
+- **ImageUploader**: 支持 JPG/PNG/WebP/HEIC/TIFF。自动修正 EXIF 旋转方向，Canvas 最大边长限制 4096px。
+- **VideoUploader**: 视频流接入，时长限制校验，使用 `HTMLVideoElement` 提取首帧作为预览。
+- **URLImporter**: 处理跨域图片 (CORS Proxy)，支持 Imgur/Unsplash 链接直连。
+- **DragDropHandler**: `react-dropzone` 全局接管 Drop 事件，提供全屏高亮反馈。
+- **MediaPreviewer**: 2D 视图下的高性能缩放、平移查看 (CSS Transform)。
+- **FormatConverter**: 媒体转 WebP/PNG，统一输入格式。
+
+## 【主模块 2】AI 分析主模块 (AIAnalysisModule)
+*职责：端侧 AI 推理核心，产出深度、语义与特征。*
+- **DepthEstimator**: **Transformers.js v3** 加载 `Depth-Anything-V2-ONNX` (WebGPU)。
+- **SemanticSegmentor**: 集成 **SAM** Web 版本，点击物体生成 Mask。
+- **ObjectDetector**: `YOLOv8-nano` 识别画面主体并生成 Bounding Box。
+- **EdgeDetector**: GPU Shader 实现 Sobel/Canny 算子，提取硬边缘。
+- **ModelManager**: `IndexedDB` 本地缓存模型 Blob，校验 Hash 避免重复下载。
+- **InferenceScheduler**: `WebWorker Pool` 任务调度，防止 UI 线程阻塞。
+
+## 【主模块 3】3D 投影主模块 (Projection3DModule)
+*职责：像素到三维空间的几何映射。*
+- **PlanarProjector**: `PlaneGeometry` + Displacement Shader，基础 3D 化。
+- **CylindricalProjector**: 半圆柱几何体映射，适配 180 度全景。
+- **SphericalProjector**: `SphereGeometry` (BackSide)，适配 360 度 VR 全景。
+- **CubemapProjector**: `WebGLCubeRenderTarget` 离屏渲染生成天空盒 6 面图。
+- **ParallaxProjector**: 基于 SAM Mask 将图像拆分为前景/中景/背景三个独立 Mesh 层。
+- **PointCloudRenderer**: `THREE.Points` 系统，根据深度值动态丢弃背景点。
+- **MeshReconstructor**: 自适应网格细分算法 (Adaptive Subdivision)，根据深度梯度增加面数。
+
+## 【主模块 4】相机控制主模块 (CameraControlModule)
+*职责：视口交互与虚拟摄影机管理。*
+- **PerspectiveCameraController**: 标准透视相机，模拟人眼 FOV。
+- **OrthographicCameraController**: 正交相机，用于工程视图查看。
+- **OrbitController**: 封装 `camera-controls`，支持惯性阻尼与极角限制。
+- **FirstPersonController**: PointerLock API，WASD 漫游模式。
+- **FlyController**: 6 DOF 自由飞行模拟。
+- **SmoothTransitioner**: `GSAP` 驱动的相机位置/姿态 (Quaternion) 插值。
+- **CameraParamsPanel**: Leva/Radix UI 面板，双向绑定相机参数。
+
+## 【主模块 5】自动运镜主模块 (AutoMotionModule)
+*职责：基于关键帧的动画系统。*
+- **PathEditor**: 可视化 `CatmullRomCurve3` 路径绘制。
+- **KeyframeManager**: 存储 `{t, state}` 关键帧序列。
+- **BezierCurveGenerator**: 三阶贝塞尔路径算法。
+- **EasingCurveEditor**: 可视化调节速度曲线 (Ease-In/Out)。
+- **TimelineController**: `requestAnimationFrame` 驱动的全局时间轴。
+- **MotionPresetsLibrary**: 预设运镜库 (如“希区柯克变焦”)。
+- **MotionPreviewer**: 小窗口 RenderTarget 实时预览运镜结果。
+
+## 【主模块 6】裸眼 3D 主模块 (Naked3DModule)
+*职责：交互式视差体验。*
+- **ParallaxProcessor**: 核心算法 `Offset = Input * Depth * Intensity`。
+- **GyroscopeTracker**: 监听 `deviceorientation`，卡尔曼滤波平滑数据。
+- **MouseTracker**: 桌面端鼠标位置映射。
+- **DepthLayerSeparator**: Fragment Shader 根据深度阈值切割图层。
+- **MultiViewRenderer**: 生成光场显示器所需的瓦片图 (Quilt Tiling)。
+- **DeviceAdapter**: 自动识别移动端/桌面端交互方式。
+
+## 【主模块 7】全息投影主模块 (HologramModule)
+*职责：伪全息设备适配。*
+- **PyramidViewGenerator**: 单帧 4 次 Render，生成 4 个 90 度旋转视图。
+- **MultiAngleRenderer**: 适配 3/4/8 面全息柜。
+- **PeppersGhostSimulator**: 屏幕模拟佩珀尔幻像 (半透明叠加 + Glow)。
+- **HologramVideoEncoder**: 抓取合成后的 Canvas 流导出视频。
+- **ViewLayoutManager**: UI 调整视图间距与 Offsets。
+
+## 【主模块 8】后期处理主模块 (PostProcessingModule)
+*职责：画面美化与风格化。*
+- **ColorCorrector**: Shader 级亮度/对比度/饱和度调节。
+- **LUTLoader**: `.cube` 3D LUT 映射。
+- **HDRProcessor**: ToneMapping (Reinhard/ACESFilmic)。
+- **DOFProcessor**: 基于深度图的 Bokeh 散景模糊。
+- **MotionBlurProcessor**: 基于速度缓存 (Velocity Buffer) 的动态模糊。
+- **BloomProcessor**: Unreal Bloom 泛光算法。
+- **ChromaticAberration**: 边缘 RGB 通道分离色差。
+- **VignetteProcessor**: 径向亮度衰减。
+- **SharpenDenoiser**: CAS 锐化算法。
+
+## 【主模块 9】画面氛围主模块 (AtmosphereModule)
+*职责：环境增强与粒子特效。*
+- **AmbientLightManager**: HDRi IBL 环境光照。
+- **FogProcessor**: 高度雾 (Height Fog) 或指数雾。
+- **ParticleSystem**: GPGPU 粒子系统 (雨/雪/浮尘)。
+- **VolumetricLightRenderer**: 径向模糊模拟体积光 (God Rays)。
+- **SkyboxManager**: 独立 Scene 渲染天空盒背景。
+- **AtmospherePresetsLibrary**: 氛围参数组合预设。
+
+## 【主模块 10】几何材质主模块 (GeometryMaterialModule)
+*职责：网格实体属性编辑。*
+- **MeshSubdivisionController**: 动态调整 Geometry Segments。
+- **VertexDisplacer**: 控制位移贴图的强度 Scale。
+- **PBRMaterialEditor**: 编辑 Roughness/Metalness/EnvMapIntensity。
+- **NormalMapGenerator**: Shader 中利用深度梯度实时计算法线。
+- **MaterialPresetsLibrary**: 常用物理材质预设。
+
+## 【主模块 11】媒体增强主模块 (MediaEnhanceModule)
+*职责：源与结果的 AI 画质增强。*
+- **AISuperResolution**: Real-ESRGAN (WebGPU) 4x 超分。
+- **AIDenoiser**: 图像降噪模型。
+- **ColorEnhancer**: 自动直方图均衡化。
+- **DetailSharpener**: Unsharp Masking 滤镜。
+- **EnhancePreview**: 分屏对比滑块。
+- **BatchProcessor**: 队列化批量处理。
+
+## 【主模块 12】导出输出主模块 (ExportModule)
+*职责：渲染结果序列化与下载。*
+- **ImageExporter**: 4K 高分帧渲染保存 PNG/JPG。
+- **VideoExporter**: **WebCodecs + mp4-muxer** 硬件加速编码 H.264 MP4。
+- **GIFExporter**: `gif.js` 仅限 Worker 线程执行色彩量化与合成。
+- **Model3DExporter**: `GLTFExporter` 导出带位移的 Mesh。
+- **ProjectExporter**: 序列化 Zustand Store 为 JSON 项目文件。
+- **ShareLinkGenerator**: 云端存储配置生成预览链接。
+
+---
+
+# 第四部分：技术栈选型与路线图 (Technology & Roadmap)
+
+## 1. 技术栈 (2025 Standard)
+*   **Core**: React 19 + TypeScript
+*   **3D**: React Three Fiber (R3F)
+*   **AI**: Transformers.js v3 (WebGPU)
+*   **State**: Zustand + Immer
+*   **Media**: WebCodecs API
+*   **UI**: Radix UI + CSS Modules
+
+## 2. 实施路线图
+*   **Phase 1**: 骨架搭建，实现 Registry 与基础渲染循环。
+*   **Phase 2**: 集成 AI 深度估计，打通 2D-3D 映射核心。
+*   **Phase 3**: 12 模块并发开发，完善后处理与交互。
+*   **Phase 4**: 性能优化，WebGPU 调优，发布 Release。
+
+---
+
+**Antigravity 结语**: 本文档 (V4) 已穷尽项目当前阶段的所有技术定义。请所有开发者以此为准，立即进入 Phase 1 开发阶段。

@@ -1,0 +1,229 @@
+/* ============================================================
+   Immersa 3D - PBR Material Editor Styles
+   ============================================================ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.headerActions {
+  display: flex;
+  gap: 4px;
+}
+
+.iconButton {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.iconButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.presetsPanel {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.presetCategory {
+  margin-bottom: 12px;
+}
+
+.presetCategory:last-child {
+  margin-bottom: 0;
+}
+
+.presetCategoryTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.presetGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.presetButton {
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  color: #ccc;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.presetButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.presetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.tab {
+  flex: 1;
+  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab:hover {
+  color: #ccc;
+}
+
+.tab.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sliderRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sliderLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: #aaa;
+}
+
+.sliderWrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider {
+  flex: 1;
+  height: 4px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #00ff88;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sliderValue {
+  min-width: 40px;
+  font-size: 11px;
+  color: #888;
+  text-align: right;
+  font-family: monospace;
+}
+
+.colorRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.colorLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: #aaa;
+}
+
+.colorWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.colorInput {
+  width: 32px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+.colorInput::-webkit-color-swatch {
+  border-radius: 2px;
+  border: none;
+}
+
+.colorValue {
+  font-size: 11px;
+  color: #888;
+  font-family: monospace;
+}
