@@ -1,0 +1,110 @@
+{
+  "name": "immersa-3d-scene-viewer",
+  "version": "1.0.0",
+  "description": "AI-powered 2D to 3D scene reconstruction using React Three Fiber and TensorFlow.js",
+  "private": true,
+  "type": "module",
+  "main": "electron/electron.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "build:analyze": "vite build --mode analyze",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "tsc --noEmit --watch",
+    "lint": "eslint src --max-warnings 0",
+    "lint:fix": "eslint src --fix",
+    "lint:strict": "eslint src --max-warnings 0 && tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "verify": "npm run lint:strict && vite build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "clean": "rimraf dist node_modules/.vite",
+    "prepare": "husky",
+    "sort-code": "npx tsx scripts/sort-code/index.ts",
+    "docs:utils": "npx tsx scripts/generate-utils-docs.ts",
+    "remove-comments": "npx tsx scripts/remove-comments/index.ts",
+    "electron:dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron:build": "npm run build && electron-builder"
+  },
+  "keywords": [
+    "react",
+    "three.js",
+    "3d",
+    "depth-estimation",
+    "ai",
+    "gemini",
+    "tensorflow"
+  ],
+  "dependencies": {
+    "@google/genai": "^1.35.0",
+    "@mediapipe/face_detection": "^0.4.1646425229",
+    "@mediapipe/selfie_segmentation": "^0.1.1675465747",
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "@tensorflow-models/body-segmentation": "^1.0.2",
+    "@tensorflow-models/depth-estimation": "^0.0.4",
+    "@tensorflow-models/face-detection": "^1.0.3",
+    "@tensorflow/tfjs": "^4.22.0",
+    "hls.js": "^1.6.15",
+    "lucide-react": "^0.562.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "reflect-metadata": "^0.2.2",
+    "three": "^0.182.0",
+    "three-stdlib": "^2.36.1",
+    "tsyringe": "^4.10.0",
+    "zustand": "^5.0.9"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.3.1",
+    "@commitlint/config-conventional": "^20.3.1",
+    "@eslint/js": "^9.39.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.3",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "^0.182.0",
+    "@vitejs/plugin-react": "^5.1.2",
+    "concurrently": "^9.1.2",
+    "electron": "^35.1.5",
+    "electron-builder": "^26.4.0",
+    "eslint": "^9.39.2",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-perfectionist": "^5.3.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "jsdom": "^27.4.0",
+    "lint-staged": "^16.2.7",
+    "postcss": "^8.5.6",
+    "prettier": "^3.8.0",
+    "rimraf": "^6.0.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.53.0",
+    "vite": "^7.0.0",
+    "vite-plugin-glsl": "^1.5.5",
+    "vitest": "^4.0.17",
+    "wait-on": "^8.0.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "prettier --write --ignore-unknown",
+      "eslint --fix --max-warnings 0"
+    ],
+    "*.{json,md}": [
+      "prettier --write --ignore-unknown"
+    ]
+  },
+  "overrides": {
+    "three": "^0.182.0"
+  }
+}
